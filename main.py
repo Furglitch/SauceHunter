@@ -2,10 +2,11 @@ from typing import Final
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 from pysaucenao import SauceNao
+from config import token, snao_key
 
-token: Final = 'TOKEN HERE'
+#token: Final = 'Telegram Bot Token Here' # within config.py
 bot_username: Final = '@SauceHunter_Bot'
-snao_key: str = "SauceNAO API KEY HERE"
+#snao_key: str = "SauceNAO API Key Here" # within config.py
 snao_sim: int = 70
 sauce = SauceNao(api_key=snao_key, min_similarity=snao_sim)
 

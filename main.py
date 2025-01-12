@@ -47,6 +47,12 @@ async def sendMessage(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f'Bot: {response}')
     await update.message.reply_text(response)
     
+# Image Handling
+async def getImage(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    file = await update.message.photo[-1].get_file()
+    url = file.file_path
+    print(f'Received Image {url} from User {update.message.chat.username} ({update.message.chat.id})')
+    
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f'Update {update} caused error {context.error}')
     
@@ -61,6 +67,7 @@ if __name__ == '__main__':
     
     # Messages
     app.add_handler(MessageHandler(filters.TEXT, sendMessage))
+    app.add_handler(MessageHandler(filters.PHOTO, getImage))
     
     # Errors
     app.add_error_handler(error)

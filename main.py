@@ -1,9 +1,13 @@
 from typing import Final
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+from pysaucenao import SauceNao
 
 token: Final = 'TOKEN HERE'
 bot_username: Final = '@SauceHunter_Bot'
+snao_key: str = "SauceNAO API KEY HERE"
+snao_sim: int = 70
+sauce = SauceNao(api_key=snao_key, min_similarity=snao_sim)
 
 # Commands
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -52,6 +56,42 @@ async def getImage(update: Update, context: ContextTypes.DEFAULT_TYPE):
     file = await update.message.photo[-1].get_file()
     url = file.file_path
     print(f'Received Image {url} from User {update.message.chat.username} ({update.message.chat.id})')
+    results = await sauce.from_url(url)
+    if results:
+        results = sorted(results, key = lambda x: x.similarity, reverse=True)
+        print(f'Found {len(results)} results for {url}')
+        for result in results:
+            if result.source_url is not None: 
+                preview = None
+                if hasattr(result, 'thumbnail'): preview = result.thumbnail
+                response = f'<b>{result.title}</b>\n'
+                response += f'<i>{result.similarity}% Match!</i>'
+                if result.authors:
+                    response += '\n'
+                    if len(result.authors) == 1: response += '\nAuthor:\n'
+                    elif len(result.authors) > 1: response += '\nAuthors:\n'
+                    for author in result.authors: response += f'<i>{author}</i>'
+                if hasattr(result, 'characters'):
+                    response += '\n'
+                    charNum: int = 0
+                    if len(result.characters) == 1: response += '\nCharacter:\n'
+                    elif len(result.characters) > 1: response += '\nCharacters:\n'
+                    for character in result.characters:
+                        charNum += 1
+                        response += f'<i>{character}</i>'
+                        if len(result.characters) > 1 and charNum != len(result.characters): response += ', '
+                response += '\n\nSource:'
+                response += f'\n{result.source_url}'
+                if result.urls: 
+                    for url in result.urls:
+                        if url != result.source_url:
+                            response += f'\n{url}'
+                if preview is not None: 
+                    await update.message.reply_photo(photo=preview, caption=response, parse_mode='HTML')
+                else: await update.message.reply_text(response, parse_mode='HTML', disable_web_page_preview=True)
+                print(f'Bot: {response}')
+            else: pass
+    else: await update.message.reply_text(f'No results found for the image. At least, not above {snao_sim}% similarity.')
     
 async def error(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f'Update {update} caused error {context.error}')

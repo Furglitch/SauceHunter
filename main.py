@@ -10,7 +10,6 @@ bot_username: Final = '@SauceHunter_Bot'
 snao_sim: int = 70
 sauce = SauceNao(api_key=snao_key, min_similarity=snao_sim)
 
-# Commands
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('Hello! I am SauceHunter Bot. I can help you find the source of an image. Just send me an image and I will do the rest!')
 
@@ -20,8 +19,6 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def info(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('The test worked!')
 
-
-# Responses
 def getMessage(text: str) -> str:
     processed: str = text.lower()
     
@@ -52,7 +49,6 @@ async def sendMessage(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(f'Bot: {response}')
     await update.message.reply_text(response)
     
-# Image Handling
 async def getImage(update: Update, context: ContextTypes.DEFAULT_TYPE):
     file = await update.message.photo[-1].get_file()
     url = file.file_path
@@ -101,18 +97,14 @@ if __name__ == '__main__':
     print ('Bot is running...')
     app = Application.builder().token(token).build()
     
-    # Commands
     app.add_handler(CommandHandler('start', start))
     app.add_handler(CommandHandler('help', help))
     app.add_handler(CommandHandler('info', info))
     
-    # Messages
     app.add_handler(MessageHandler(filters.TEXT, sendMessage))
     app.add_handler(MessageHandler(filters.PHOTO, getImage))
     
-    # Errors
     app.add_error_handler(error)
     
-    # Start polling
     print('Polling...')
     app.run_polling(poll_interval=2)

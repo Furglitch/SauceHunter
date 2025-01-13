@@ -14,24 +14,15 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text('Hello! I am SauceHunter Bot. I can help you find the source of an image. Just send me an image and I will do the rest!')
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text('Help Message')
+    await update.message.reply_text('/help feature not developed yet...')
 
 async def info(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text('The test worked!')
+    await update.message.reply_text('/info command not developed yet...')
 
 def getMessage(text: str) -> str:
-    processed: str = text.lower()
+    #processed: str = text.lower()
     
-    if 'hello' in processed:
-        return 'Hello! How can I help you?'
-    
-    if 'bye' in processed:
-        return 'Goodbye! Have a great day!'
-    
-    if 'help' in processed:
-        return 'Help Message'
-    
-    return 'I am sorry, I did not understand that.'
+    return "Sorry, I can't have conversations (yet?). Just send me an image and I will find the source for you!"
     
 async def sendMessage(update: Update, context: ContextTypes.DEFAULT_TYPE):
     messageType: str = update.message.chat.type

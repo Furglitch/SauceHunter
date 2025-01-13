@@ -48,7 +48,10 @@ async def getImage(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if results:
         results = sorted(results, key = lambda x: x.similarity, reverse=True)
         print(f'Found {len(results)} results for {url}')
+        count = 0
         for result in results:
+            count += 1
+            if count > 5: break
             if result.source_url is not None: 
                 preview = None
                 if hasattr(result, 'thumbnail'): preview = result.thumbnail
